@@ -7,7 +7,9 @@ import {
   SET_LOADING,
   CLEAR_USER,
   GET_USER,
-  GET_REPOS
+  GET_REPOS,
+  SEARCH_USERS,
+  CLEAR_USERS
 } from '../types';
 
 const GithubState = props => {
@@ -20,13 +22,50 @@ const GithubState = props => {
 
   const [state, dispatch] = useReducer(GithubReducer, initialState);
 
+  const searchUsers = async text => {
+    setLoading();
+
+    const res = await axios.get(
+      `https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GH_CLIENT_ID}&client_secret=${process.env.REACT_APP_GH_CLIENT_SECRET}`
+    );
+
+    dispatch({
+      type: SEARCH_USERS,
+      payload: res.data.items
+    });
+  };
+
+  const clearUsers = () => {
+    dispatch({ type: CLEAR_USERS });
+  };
+
+  const getUser = async username => {
+    setLoading();
+
+    const res = await axios.get(
+      `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GH_CLIENT_ID}&client_secret=${process.env.REACT_APP_GH_CLIENT_SECRET}`
+    );
+
+    dispatch({
+      type: GET_USER,
+      payload: res.data
+    });
+  };
+
+  const setLoading = () => {
+    dispatch({ type: SET_LOADING });
+  };
+
   return (
     <GithubContext.Provider
       value={{
         users: state.users,
         user: state.user,
         repos: state.repos,
-        loading: state.loading
+        loading: state.loading,
+        searchUsers,
+        clearUsers,
+        getUser
       }}
     >
       {props.children}
