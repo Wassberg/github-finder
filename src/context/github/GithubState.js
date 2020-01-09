@@ -3,9 +3,7 @@ import axios from 'axios';
 import GithubContext from './githubContext';
 import GithubReducer from './githubReducer';
 import {
-  SEARCH_USER,
   SET_LOADING,
-  CLEAR_USER,
   GET_USER,
   GET_REPOS,
   SEARCH_USERS,
